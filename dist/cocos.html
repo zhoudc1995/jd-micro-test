@@ -1,0 +1,452 @@
+<!DOCTYPE html><html><head>
+  <meta charset="utf-8">
+
+  <title>题目详情
+  </title>
+
+  <!--http://www.html5rocks.com/en/mobile/mobifying/-->
+  <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,minimum-scale=1,maximum-scale=1">
+
+  <!--https://developer.apple.com/library/safari/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html-->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="format-detection" content="telephone=no">
+
+  <!-- force webkit on 360 -->
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <!-- force edge on IE -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="msapplication-tap-highlight" content="no">
+
+  <!-- force full screen on some browser -->
+  <meta name="full-screen" content="yes">
+  <meta name="x5-fullscreen" content="true">
+  <meta name="360-fullscreen" content="true">
+
+  <!--fix fireball/issues/3568 -->
+  <!--<meta name="browsermode" content="application">-->
+  <meta name="x5-page-mode" content="app">
+
+  <!--<link rel="apple-touch-icon" href=".png" />-->
+  <!--<link rel="apple-touch-icon-precomposed" href=".png" />-->
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+
+  <link rel="stylesheet" type="text/css" href="style.css">
+
+</head>
+
+<body>
+  <div id="GameDiv" cc_exact_fit_screen="true">
+    <div id="Cocos3dGameContainer">
+      <canvas id="GameCanvas" oncontextmenu="event.preventDefault()" tabindex="99"></canvas>
+    </div>
+    <div id="UploadResource" style="width: 0; height: 0; overflow: hidden;">
+      <!-- 打开相册或读取电脑本地图片  -->
+      <!-- <input id="OpenImageFile" type="file" capture="camera" accept="image/*" style="visibility: hidden"> -->
+      <input id="OpenImageFile" type="file" accept="image/*" style="visibility: hidden">
+      <!-- 打开相册或读取电脑本地音频  -->
+      <input id="OpenAudioFile" type="file" accept="audio/*" style="visibility: hidden">
+      <input id="OpenSpineFile" type="file" accept=".skel,.json,.txt,.atlas,image/*" style="visibility: hidden" multiple="">
+    </div>
+    <div id="loading-full">
+      <div id="loading-container">
+        <div id="progress">
+          <div id="progres"></div>
+        </div>
+        <div id="loading-lottie"></div>
+      </div>
+      <div class="loading">
+        <p class="loading-texts">加载中</p>
+        <div class="line-loading">
+          <div class="bounce1"></div>
+          <div class="bounce2"></div>
+          <div class="bounce3"></div>
+        </div>
+      </div>
+
+    </div>
+    <div id="error-tips-full">
+      <div class="centered-text">
+        <p id="error-tips-title" style="font-size: 4.0vw"></p>
+        <p id="error-tips-content" style="font-size: 2.5vw"></p>
+      </div>
+    </div>
+  </div>
+
+    <script>"use strict";
+
+this.theRequest = new Object();
+var url = location.search; //获取url中"?"符后的字串
+if (url.indexOf('?') != -1) {
+  var str = url.substr(1);
+  var strs = str.split('&');
+  for (var i = 0; i < strs.length; i++) {
+    this.theRequest[strs[i].split('=')[0]] = decodeURIComponent(strs[i].split('=')[1]);
+  }
+}
+var isOnline = this.theRequest['env'] == 'prod' || this.theRequest['env'] == 'online' ? true : false; //判断是线上环境还是测试环境。
+window['isOnline'] = isOnline;
+
+// mcc打包时设置分辨率类型
+window['sceneRatio'] = '1';
+// 设置是不是乐读(ledu)
+window['classType'] = 'lele';
+// mcc打包时设置主包版本
+window['mainVersion'] = '1.0.143';
+if (this.theRequest['openPanel'] === 'teacherPanel') {
+  var script1 = document.createElement('script');
+  script1.src = 'dist/cos-js-sdk-v5.js';
+  document.head.appendChild(script1);
+}</script>
+        
+    <script src="dist/dist.js" charset="utf-8"></script>
+            <script>"use strict";
+
+(function () {
+  window.gameEngineCustomData = {};
+  var randomString = function randomString(len) {
+    if (len === void 0) {
+      len = 20;
+    }
+    var baseStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefjhijklmnopqrstuvwxyz1234567890";
+    var str = "";
+    for (var _i = 0; _i < len; ++_i) {
+      str += baseStr.charAt(Math.floor(Math.random() * baseStr.length));
+    }
+    return str;
+  };
+  var trace_id = randomString();
+  window.gameEngineCustomData = {
+    gameMain: {
+      trace_id: trace_id,
+      main_trace_id: randomString()
+    }
+  };
+
+  // 初始化 cocosGameMessage
+  window["gameMessageInIframe"] && window["gameMessageInIframe"].init(window.parent);
+  var cocosGameMessage = window['cocosGameMessage'] || window["gameMessageInIframe"];
+
+  // 控制台打印日志开关
+  window.isShowAliLog = false;
+
+  //错误上报
+  var url = location.search; //获取url中"?"符后的字串
+  var theRequest = new Object();
+  if (url.indexOf('?') != -1) {
+    var str = url.substr(1);
+    var strs = str.split('&');
+    for (var i = 0; i < strs.length; i++) {
+      theRequest[strs[i].split('=')[0]] = decodeURIComponent(strs[i].split('=')[1]);
+    }
+  }
+
+  // 是否从链接中获取参数：乐乐mcc、主线mcc、game-server，目前这几种是通过getInitParam接口从上层获取的，其他从URL中获取
+  var isGetInitParamFromMcc = window['cocosGameMessage'] || 'classPlayer' == theRequest['from'] || 'iframe' == theRequest['from'];
+  var initAliLogFunc = function initAliLogFunc(param) {
+    if (window.SLS_Tracker) {
+      var _window$gameEngineCus, _window$gameEngineCus2;
+      // 区分乐乐和乐读
+      var _classType = 'lele';
+      if ('classPlayer' == param['from'] || 'ledu' == param['classType'] || 'ledu' == window['classType']) {
+        _classType = 'ledu';
+      }
+      var _from = param['from'];
+      // 通过 乐乐mcc 加载游戏
+      if (window['eventCenterForCocos']) {
+        _from = 'mccPlayer';
+      }
+
+      // 通过 game-server 加载游戏
+      if ('iframe' == param['from']) {
+        _from = 'game-server';
+      }
+
+      // 通过 game-shell 加载游戏
+      if ('game-shell' == param['platform']) {
+        _from = 'game-shell';
+      }
+      var _platform = param['platform'];
+      // 乐乐课堂，将课态参数赋值给platform
+      if (!param['platform'] && param['class_mode']) {
+        _platform = param['class_mode'];
+      }
+
+      // 普通日志上报
+      window.aliLogMsg = new SLS_Tracker({
+        project: 'ledu-saas-lele',
+        logstore: 'game',
+        host: 'cn-beijing.log.aliyuncs.com',
+        time: 3,
+        count: 40,
+        localStorageKey: 'cocos-web-tracker',
+        meta: {
+          userId: param['userId'],
+          liveId: param['liveId'] || param['chapterId'],
+          env: param['env'],
+          platform: _platform,
+          classType: _classType,
+          from: _from,
+          client: param['client']
+        }
+      });
+
+      // 数据埋点上报
+      var aliProject = window['isOnline'] ? 'peiyou-saas-zaixian-zhibo-tianjige-prd' : 'peiyou-saas-zaixian-zhibo-tianjige-test';
+      window.eventTrackingMsg = new SLS_Tracker({
+        project: aliProject,
+        logstore: 'lele_produce_courseware_log',
+        host: 'cn-beijing.log.aliyuncs.com',
+        time: 3,
+        count: 40,
+        localStorageKey: 'cocos-event-tracking',
+        meta: {
+          userId: param['userId'],
+          liveId: param['liveId'] || param['chapterId'],
+          env: param['env'],
+          platform: _platform,
+          classType: _classType,
+          from: _from
+        }
+      });
+      window['eventTrackingMsg'].tracking('cocosEventTracking', {
+        live_type: 'NON_MCC_MODE',
+        times_tamp: Date.now(),
+        main_trace_id: ((_window$gameEngineCus = window["gameEngineCustomData"]) == null || (_window$gameEngineCus = _window$gameEngineCus.gameMain) == null ? void 0 : _window$gameEngineCus.main_trace_id) || '',
+        trace_id: ((_window$gameEngineCus2 = window["gameEngineCustomData"]) == null || (_window$gameEngineCus2 = _window$gameEngineCus2.gameMain) == null ? void 0 : _window$gameEngineCus2.trace_id) || '',
+        module_type: 'gameMain',
+        name: 'load_main',
+        sub_version: window['mainVersion'],
+        act: 'start',
+        desc: '主包加载-开始',
+        metric_type: "loading",
+        engine_version: '3'
+      });
+    }
+  };
+
+  // 从mcc获取参数，初始化aliLogMsg
+  if (isGetInitParamFromMcc && cocosGameMessage) {
+    cocosGameMessage.dispatch('cocosToMcc', {
+      eventName: 'getInitParam',
+      data: '',
+      callback: function callback(param) {
+        if (!param) {
+          param = {};
+        }
+        window['initParams'] = param;
+        window['isOnline'] = 'prod' == param['env'] || 'online' == param['env'] ? true : false;
+        initAliLogFunc(param);
+        window.aliLogMsg && window.aliLogMsg.info('mainProcessEvent', {
+          eventName: 'cocos引擎启动',
+          data: '3.8.2',
+          version: window['mainVersion']
+        });
+      }
+    });
+
+    // 上报开始埋点
+    var traceId = 'null';
+    if (window.gameEngineCustomData && window.gameEngineCustomData['gameMain'] && window.gameEngineCustomData['gameMain']['trace_id']) {
+      traceId = window.gameEngineCustomData['gameMain']['trace_id'];
+    }
+    cocosGameMessage.dispatch('cocosToMcc', {
+      eventName: 'eventTracking',
+      data: {
+        trace_id: traceId,
+        module_type: 'gameMain',
+        name: 'load_main',
+        sub_version: window['mainVersion'],
+        act: 'start',
+        desc: '主包加载-开始',
+        metric_type: "loading",
+        engine_version: '3'
+      }
+    });
+  } else {
+    initAliLogFunc(theRequest);
+    window.aliLogMsg && window.aliLogMsg.info('mainProcessEvent', {
+      eventName: 'cocos引擎启动',
+      data: '3.8.2',
+      version: window['mainVersion']
+    });
+  }
+
+  // 监听报错
+  var oldErrMap = [];
+  var restartGame = false;
+  // 相同的错误1秒只上报一次，如果1秒内有10次以上相同的错误，通知mcc重启游戏
+  setInterval(function () {
+    oldErrMap = [];
+  }, 1000);
+  var reportError = function reportError(type, msg) {
+    if (restartGame) {
+      return;
+    }
+    if (!msg) {
+      window.aliLogMsg && window.aliLogMsg.error("window.addEventListener:" + type, '未知报错: 无报错信息');
+      return;
+    } else {
+      window.aliLogMsg && window.aliLogMsg.error("window.addEventListener:" + type, msg);
+    }
+    console.log("报错的次数为：", oldErrMap.length);
+    oldErrMap.push(msg);
+    if (oldErrMap.length >= 10 && !restartGame) {
+      restartGame = true;
+      // 通知mcc重启游戏
+      console.log("通知mcc 重启");
+      var desc = "1s\u5185\u540C\u4E00\u62A5\u9519\u8D85\u8FC710\u6B21\uFF0C\u901A\u77E5mcc\u91CD\u542F\u6E38\u620F";
+      window.aliLogMsg && window.aliLogMsg.warn(desc, msg);
+      cocosGameMessage && cocosGameMessage.dispatch('cocosToMcc', {
+        eventName: 'restartGame',
+        data: {
+          desc: desc
+        }
+      });
+    }
+  };
+  window.addEventListener('error', function (event) {
+    var errStr = '';
+    if (event.error && event.error.stack) {
+      errStr = event.error.stack.split('\n');
+    } else if (event.message) {
+      errStr = event.message + '';
+    }
+    reportError('error', errStr);
+  }, true);
+  window.addEventListener('unhandledrejection', function (event) {
+    var errStr = '';
+    if (event && event.reason) {
+      if (event.reason.stack) {
+        errStr = event.reason.stack.split('\n');
+      } else if (event.reason.error && event.reason.error.stack) {
+        errStr = event.reason.error.stack.split('\n');
+      } else if (event.reason.message) {
+        errStr = event.reason.message + '';
+      }
+    }
+    reportError('unhandledrejection', errStr);
+  }, true);
+
+  // 设置错误提示界面
+  var showErrorTips = function showErrorTips(title, content) {
+    var errorEle = document.getElementById('error-tips-full');
+    if (errorEle) {
+      errorEle.style.display = 'flex';
+      errorEle.querySelector('#error-tips-title').innerHTML = title;
+      errorEle.querySelector('#error-tips-content').innerHTML = content;
+    }
+  };
+
+  // 监听引擎抛出来的消息
+  window.onCocosEngineMessage = function (eventName, data) {
+    if ('notSupportWebgl' === eventName || 'notSupportWebgl2' === eventName) {
+      window.aliLogMsg && window.aliLogMsg.error(eventName, data);
+    }
+
+    // 不支持webgl2会自动降级使用webgl，如果webgl也不支持，游戏无法正常运行，作异常处理
+    if ('notSupportWebgl' === eventName) {
+      cocosGameMessage && cocosGameMessage.dispatch('cocosToMcc', {
+        eventName: 'eventTracking',
+        data: {
+          name: 'game_error',
+          act: 'webgl_not_support',
+          desc: '不支持webgl' //to s s
+        }
+      });
+      // 上报开始埋点
+      var _traceId = 'null';
+      if (window.gameEngineCustomData && window.gameEngineCustomData['gameMain'] && window.gameEngineCustomData['gameMain']['trace_id']) {
+        _traceId = window.gameEngineCustomData['gameMain']['trace_id'];
+      }
+      cocosGameMessage && cocosGameMessage.dispatch('cocosToMcc', {
+        eventName: 'eventTracking',
+        data: {
+          trace_id: _traceId,
+          module_type: 'gameMain',
+          name: 'load_main',
+          sub_version: window['mainVersion'],
+          act: 'fail',
+          desc: '主包加载-失败',
+          metric_type: "loading",
+          fail_type: 'invalid',
+          fail_type_detail: 'notSupportWebGL',
+          fail_msg: '不支持webgl',
+          engine_version: '3'
+        }
+      });
+      cocosGameMessage && cocosGameMessage.dispatch('cocosToMcc', {
+        eventName: 'notSupportWebgl',
+        data: {}
+      });
+      showErrorTips('加载失败:不支持webgl', '请尝试退出客户端重新进入。\n ios设备请检测是否开启了锁定模式。');
+    }
+
+    // 引擎中监听到的生命周期函数报错（这个报错无法用 window.addEventListener('error') 监听到）
+    if ('throwError' === eventName) {
+      var msg = typeof data === "string" ? data : JSON.stringify(data);
+      reportError('throwError', msg);
+    }
+    if ('engineLogMsg' === eventName) {
+      var msg1 = typeof data === "string" ? data : JSON.stringify(data);
+      window.aliLogMsg && window.aliLogMsg.info('engineLogMsg', msg1);
+    }
+  };
+
+  // 监听 webgl lost 事件
+  var canvas = document.getElementById('GameCanvas');
+  canvas.addEventListener('webglcontextlost', function (event) {
+    event.preventDefault();
+    cocosGameMessage && cocosGameMessage.dispatch('cocosToMcc', {
+      eventName: 'eventTracking',
+      data: {
+        name: 'game_error',
+        act: 'webgl_lost',
+        desc: 'webgl丢失'
+      }
+    });
+    window.aliLogMsg && window.aliLogMsg.error('webglcontextlost', 'webgl上下文丢失');
+    cocosGameMessage && cocosGameMessage.dispatch('cocosToMcc', {
+      eventName: 'webGlContextLost',
+      data: {}
+    });
+    showErrorTips('webgl上下文丢失', '请尝试退出课堂或退出客户端重新进入。');
+  }, false);
+
+  // 前后台切换日志
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'visible') {}
+    if (document.visibilityState === 'hidden') {}
+    window.aliLogMsg && window.aliLogMsg.info('mainProcessEvent', {
+      eventName: 'visibilityState',
+      data: document.visibilityState
+    });
+  });
+})();</script>
+    <script>"use strict";
+
+// 解决触摸屏电脑上无法触发触摸事件的问题
+if (document.documentElement.ontouchstart === undefined) document.documentElement.ontouchstart = null;</script> 
+    
+
+<!-- Polyfills bundle. -->
+
+<script src="src/polyfills.bundle.js" charset="utf-8"> </script>
+
+
+<!-- SystemJS support. -->
+<script src="src/system.bundle.js" charset="utf-8"> </script>
+
+<!-- Import map -->
+<script type="systemjs-importmap" charset="utf-8"> {"imports":{"cc":"./cocos-js/cc.js"}} </script>
+
+<script>"use strict";
+
+System["import"]('./index.js')["catch"](function (err) {
+  console.error(err);
+});</script>
+
+
+
+</body></html>

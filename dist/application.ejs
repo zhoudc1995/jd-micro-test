@@ -1,0 +1,37 @@
+let cc;
+export class Application {
+    constructor () {
+        this.settingsPath = '<%= settingsJsonPath %>'; // settings.json 文件路径，通常由编辑器构建时传入，你也可以指定自己的路径
+        this.showFPS = false; // 是否打开 profiler, 通常由编辑器构建时传入，你也可以指定你需要的值
+    }
+
+    init (engine) {
+        cc = engine;
+        cc.game.onPostBaseInitDelegate.add(this.onPostInitBase.bind(this)); // 监听引擎启动流程事件 onPostBaseInitDelegate
+        cc.game.onPostSubsystemInitDelegate.add(this.onPostSystemInit.bind(this)); // 监听引擎启动流程事件 onPostSubsystemInitDelegate
+    }
+
+    onPostInitBase () {
+        // cc.settings.overrideSettings('assets', 'server', '');
+        // 实现一些自定义的逻辑
+    }
+
+    onPostSystemInit () {
+        // 实现一些自定义的逻辑
+    }
+
+    start () {
+        return cc.game.init({ // 以需要的参数运行引擎
+            debugMode: <%= debugMode %> ? cc.DebugMode.INFO : cc.DebugMode.ERROR,
+            settingsPath: this.settingsPath, // 传入 settings.json 路径
+            overrideSettings: { // 对配置文件中的部分数据进行覆盖，第二部分会详细介绍这个字段
+                // assets: {
+                //      preloadBundles: [{ bundle: 'main', version: 'xxx' }],
+                // }
+                profiling: {
+                    showFPS: this.showFPS,
+                }
+            }
+        }).then(() => cc.game.run());
+    }
+}

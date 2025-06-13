@@ -1,0 +1,24 @@
+{
+  "name": "test_micro",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rm -rf dist/bundle.* && rollup -c"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@micro-zoe/micro-app": "^1.0.0-rc.26",
+    "axios": "^1.9.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.3",
+    "@rollup/plugin-html": "^1.1.0",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "rollup": "^4.43.0",
+    "rollup-plugin-serve": "^3.0.0"
+  }
+}

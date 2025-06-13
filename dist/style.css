@@ -1,0 +1,296 @@
+html {
+  -ms-touch-action: none;
+}
+
+body, canvas, div {
+  display: block;
+  outline: none;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -khtml-user-select: none;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+/* Remove spin of input type number */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+body {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  margin: 0;
+
+  overflow: hidden;
+  cursor: default;
+  color: #888;
+
+  font-family: Helvetica, Verdana, Arial;
+
+  display: flex;
+  flex-direction: column;
+}
+
+canvas {
+  background-color: rgba(255, 255, 255);
+}
+
+#GameDiv, #Cocos3dGameContainer, #GameCanvas {
+  width: 100%;
+  height: 100%;
+}
+
+:root {
+  --safe-top: env(safe-area-inset-top);
+  --safe-right: env(safe-area-inset-right);
+  --safe-bottom: env(safe-area-inset-bottom);
+  --safe-left: env(safe-area-inset-left);
+}
+
+
+@font-face {
+  /* font-properties */
+  font-family: huawawa;
+  src: url('./huawawa.ttf');
+}
+
+.loading-texts {
+  font-family: huawawa, sans-serif, system-ui;
+  font-size: 3.5vw;
+  /* 使用vw单位进行自适应字体大小 */
+}
+
+#loading-full {
+  height: 100%;
+  pointer-events: none;
+  justify-content: center;
+  position: fixed;
+  background: #008ef1;
+  width: 100%;
+  z-index: 99999999;
+  top: 0;
+  left: 0;
+}
+
+#loading-lottie {
+  width: 10vw;
+  /* 使用vw单位进行自适应宽度 */
+  pointer-events: none;
+  height: 12vw;
+  /* 使用vw单位进行自适应高度 */
+  position: absolute;
+  float: left;
+  top: -5.6vw;
+  /* 使用vw单位进行自适应位置 */
+}
+
+#loading-container {
+  width: 57.5vw;
+  /* 使用vw单位进行自适应宽度 */
+  pointer-events: none;
+  height: 6.5vw;
+  /* 使用vw单位进行自适应高度 */
+  left: 50%;
+  margin-left: -28.75vw;
+  /* 使用vw单位进行自适应位置 */
+  position: absolute;
+  bottom: 0;
+  z-index: 999999;
+}
+
+#loading-bg {
+  height: 100%;
+  width: 100%;
+  object-fit: fill;
+  z-index: 1000;
+  position: relative;
+}
+
+.loading-text {
+  position: absolute;
+  color: #fff;
+  top: 50%;
+  left: 50%;
+  margin-top: -1.75vw;
+  /* 使用vw单位进行自适应位置 */
+  margin-left: -10vw;
+  /* 使用vw单位进行自适应位置 */
+  font-size: 3.5vw;
+  /* 使用vw单位进行自适应字体大小 */
+}
+
+.loading {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.loading p {
+  float: left;
+  color: #fff;
+  font-size: 3.5vw;
+  /* 使用vw单位进行自适应字体大小 */
+  margin: 0;
+  padding-right: 0.8vw;
+  /* 使用vw单位进行自适应间距 */
+}
+
+p {
+  font-family: PingFangSC-Regular;
+  font-size: 1.4vw;
+  /* 使用vw单位进行自适应字体大小 */
+  color: #666666;
+  letter-spacing: 0;
+  line-height: 1.4vw;
+  /* 使用vw单位进行自适应行高 */
+  margin-top: 1.6vw;
+  /* 使用vw单位进行自适应间距 */
+}
+
+.line-loading {
+  float: left;
+}
+
+.line-loading>div {
+  width: 1vw;
+  /* 使用vw单位进行自适应宽度 */
+  height: 1vw;
+  /* 使用vw单位进行自适应高度 */
+  background-color: #fff;
+  border-radius: 100%;
+  display: inline-block;
+  -webkit-animation: bouncedelay 2s infinite ease-in-out;
+  animation: bouncedelay 2s infinite ease-in-out;
+  /* Prevent first frame from flickering when animation starts */
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
+
+.line-loading .bounce1 {
+  -webkit-animation-delay: -1.5s;
+  animation-delay: -1.5s;
+  background: #ffffff;
+}
+
+.line-loading .bounce2 {
+  -webkit-animation-delay: -1s;
+  animation-delay: -1s;
+  background: #ffffff;
+}
+
+.line-loading .bounce3 {
+  -webkit-animation-delay: -0.3s;
+  animation-delay: -0.3s;
+  background: #ffffff;
+}
+
+#error-tips-full {
+  height: 100%;
+  width: 100%;
+  pointer-events: none;
+  justify-content: center;
+  position: fixed;
+  background: white;
+  z-index: 999999999;
+  top: 0;
+  left: 0;
+  display: none; /* 使用 Flexbox 布局 */
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
+  text-align: center; /* 文本居中对齐 */
+}
+
+/* 样式化内部的文本 */
+.centered-text {
+  color: #000000; /* 文本颜色 */
+  max-width: 70%; /* 设置最大宽度为屏幕宽度的70% */
+  margin: auto; /* 居中显示 */
+  word-wrap: break-word; /* 长单词或URL地址也会被换行 */
+
+  p {
+    font-size: 1.2em; /* 文本大小 */
+    overflow-wrap: break-word; /* 同word-wrap */
+  }
+}
+
+@-webkit-keyframes bouncedelay {
+
+  0%,
+  80%,
+  100% {
+    -webkit-transform: scale(0);
+  }
+
+  40% {
+    -webkit-transform: scale(1);
+  }
+}
+
+@keyframes bouncedelay {
+
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+    -webkit-transform: scale(0);
+  }
+
+  40% {
+    transform: scale(1);
+    -webkit-transform: scale(1);
+  }
+}
+
+/* 使用@media查询根据不同屏幕尺寸应用不同的样式 */
+@media (max-width: 768px) {
+  .loading-texts {
+    font-size: 5vw;
+  }
+
+  #loading-lottie {
+    width: 20vw;
+    height: 24vw;
+    top: -11.2vw;
+  }
+
+  #loading-container {
+    width: 80vw;
+    height: 9vw;
+    margin-left: -40vw;
+  }
+
+  .loading-text {
+    margin-top: -3.5vw;
+    margin-left: -20vw;
+    font-size: 7vw;
+  }
+
+  .loading p {
+    font-size: 7vw;
+    padding-right: 1.6vw;
+  }
+
+  p {
+    font-size: 2.8vw;
+    line-height: 2.8vw;
+    margin-top: 1.6vw;
+  }
+
+  .line-loading>div {
+    width: 2vw;
+    height: 2vw;
+  }
+}

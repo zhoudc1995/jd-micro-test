@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Micro App Main</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f5f5f5;
+        }
+        .header {
+            padding: 20px;
+            text-align: center;
+        }
+        #app-container {
+            width: 100%;
+            height: 100%;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+        micro-app[name=subapp]{
+            width: 800px;
+            height: 600px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Micro App 主应用</h1>
+    </div>
+    <div id="app-container"></div>
+    <script src="{{bundle}}"></script>
+</body>
+</html> 
