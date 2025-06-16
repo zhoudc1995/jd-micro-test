@@ -26,7 +26,7 @@ microApp.start({
 
 
 const container = document.getElementById('app-container');
-const url = location.href.includes('https') ? location.origin + '/testMicro/cocos.html' : location.origin + '/cocos.html';
+const url = location.href.includes('https') ? location.origin + '/testMicro/test.html' : location.origin + '/test.html';
 
   microApp.renderApp({
     name: 'subapp',
