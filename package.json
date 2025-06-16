@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@micro-zoe/micro-app": "^1.0.0-rc.26",
+    "@micro-zoe/micro-app": "^1.0.0-rc.4",
     "axios": "^1.9.0"
   },
   "devDependencies": {

@@ -28,10 +28,7 @@ export default {
     file: `dist/${bundleFileName}`,
     format: 'iife',
     name: 'MainApp',
-    sourcemap: true,
-    globals: {
-      axios: 'axios'
-    }
+    sourcemap: true
   },
   plugins: [
     resolve({
@@ -46,10 +43,8 @@ export default {
       template
     }),
     serve({
-      open: true,
       contentBase: 'dist',
       port: 3001,
     }),
-  ],
-  external: ['axios']
+  ]
 }; 

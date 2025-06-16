@@ -39,7 +39,7 @@
 <body>
   <div id="GameDiv" cc_exact_fit_screen="true">
     <div id="Cocos3dGameContainer">
-      <canvas id="GameCanvas" oncontextmenu="event.preventDefault()" tabindex="99"></canvas>
+      <canvas ignore id="GameCanvas" oncontextmenu="event.preventDefault()" tabindex="99"></canvas>
     </div>
     <div id="UploadResource" style="width: 0; height: 0; overflow: hidden;">
       <!-- 打开相册或读取电脑本地图片  -->
@@ -432,16 +432,16 @@ if (document.documentElement.ontouchstart === undefined) document.documentElemen
 
 <!-- Polyfills bundle. -->
 
-<script src="src/polyfills.bundle.js" charset="utf-8"> </script>
+<script  src="src/polyfills.bundle.js" charset="utf-8"> </script>
 
 
 <!-- SystemJS support. -->
-<script src="src/system.bundle.js" charset="utf-8"> </script>
+<script  src="src/system.bundle.js" charset="utf-8"> </script>
 
 <!-- Import map -->
-<script type="systemjs-importmap" charset="utf-8"> {"imports":{"cc":"./cocos-js/cc.js"}} </script>
+<script  type="systemjs-importmap" charset="utf-8"> {"imports":{"cc":"./cocos-js/cc.js"}} </script>
 
-<script>"use strict";
+<script >"use strict";
 
 System["import"]('./index.js')["catch"](function (err) {
   console.error(err);
